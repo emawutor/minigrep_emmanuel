@@ -13,8 +13,7 @@ use std::io::prelude::*; // contains useful trains for doing I/O
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    let query = &args[1];
-    let filename = &args[2];
+    let (query, filename) = parse_config(&args);
 
     println!("Searching for {}", query);
 
@@ -23,10 +22,18 @@ fn main() {
     let mut f = File::open(filename).expect("file not found");
 
     let mut contents = String::new();
+
     f.read_to_string(&mut contents)
         .expect("something went wrong reading the file");
 
 
     println!("With text:\n{}", contents);
 
+}
+
+fn parse_config (args: &[String]) -> (&str, &str) {
+  let query = &args[1];
+  let filename = &args[2];
+
+  (query, filename)
 }
