@@ -1,6 +1,6 @@
 use std::env; // bring the parent to scope so that it can be reused
-// use std::fs::File; // to handle files
-//use std::io::prelude::*; // contains useful trains for doing I/O
+use std::fs::File; // to handle files
+use std::io::prelude::*; // contains useful trains for doing I/O
 
 use std::process;
 use std::error::Error;
@@ -24,8 +24,23 @@ fn main() {
     println!("Searching for {}", config.query);
     println!("In file {}", config.filename);
 
-    run(config);
+    if let Err(e) = run(config) {
+        println!("Application error: {}", e);
+        process::exit(1);
+    }
 }
+
+fn run(config: Config) -> Result<(), Box<Error>> {
+    let mut f = File::open(config.filename)?;
+
+    let mut contents = String::new();
+    f.read_to_string(&mut contents)?;
+
+    println!("With text:\n{}", contents);
+
+    Ok(())
+}
+
 
 struct Config {
     query: String ,
@@ -44,15 +59,6 @@ impl Config {
   }
 }
 
-fn run(config: Config) Result<(), Box<Error>> {
-    let mut f = File::open(config.filename).expect("file not found")?;
-    let mut contents = String::new();
-    f.read_to_string(&mut contents)
-        .expect("something went wrong reading the file");
 
-    println!("With text:\n{}", contents);
-
-    Ok(())
-}
 
 
